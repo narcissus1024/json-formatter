@@ -1,0 +1,278 @@
+/* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 全局样式 */
+:root {
+    --primary-color: #667eea;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --text-color: #333;
+    --border-color: #e1e8ed;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --background-color: #f8f9fa;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 主体样式 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--primary-gradient);
+    min-height: 100vh;
+    color: var(--text-color);
+    overflow: auto;
+}
+
+/* 容器样式 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* 头部样式 */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: white;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px var(--shadow-color);
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* 主要内容区域 */
+.main-content {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    min-height: 600px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* 编辑器区域 */
+.editor-section {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: visible;
+    position: relative;
+}
+
+.section-header {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--background-color);
+}
+
+.section-header h2 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.editor-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* 编辑器容器 */
+.editor-container {
+    flex: 1;
+    position: relative;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 100px;
+    min-width: 0;
+    width: 100%;
+}
+
+.editor-container textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 100px;
+    border: none;
+    padding: 15px;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    outline: none;
+    background: #fafafa;
+}
+
+.editor-container textarea:focus {
+    background: white;
+}
+
+/* 错误消息 */
+.error-message {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    min-height: 20px;
+}
+
+.error-message span {
+    display: block;
+}
+
+.error-message span.error {
+    color: var(--error-color);
+}
+
+.error-message span.success {
+    color: var(--success-color);
+}
+
+.error-message span.warning {
+    color: var(--warning-color);
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: var(--background-color);
+    color: #6c757d;
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    color: #495057;
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* CodeMirror 自定义样式 */
+.CodeMirror {
+    height: auto !important;
+    min-height: 500px !important;
+    font-family: 'Fira Code', 'Courier New', Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    border-radius: 8px;
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+}
+
+.CodeMirror-scroll {
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    height: auto;
+    position: relative;
+    outline: none;
+    min-height: 0;
+}
+
+.CodeMirror-gutters {
+    border-right: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    white-space: nowrap;
+    height: 100%;
+}
+
+.CodeMirror-linenumber {
+    padding: 0 5px;
+    min-width: 20px;
+    text-align: right;
+    color: #999;
+    white-space: nowrap;
+}
+
+.CodeMirror-lines {
+    padding: 10px 0;
+}
+
+.CodeMirror-line {
+    padding: 0 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .editor-controls {
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #999;
+} 

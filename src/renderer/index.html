@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+    <title>JSON格式化工具</title>
+    <!-- CodeMirror 样式 -->
+    <link rel="stylesheet" href="lib/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="lib/codemirror/theme/eclipse.css">
+    <link rel="stylesheet" href="lib/codemirror/addon/fold/foldgutter.css">
+    <link rel="stylesheet" href="lib/codemirror/addon/lint/lint.css">
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JSON格式化工具</h1>
+            <!-- <p>一个简单易用的JSON处理工具</p> -->
+        </header>
+
+        <div class="main-content">
+            <section class="editor-section">
+                <div class="section-header">
+                    <h2>编辑器</h2>
+                    <div class="editor-controls">
+                        <button id="formatBtn" class="btn btn-primary" title="格式化JSON (Ctrl+F)">格式化</button>
+                        <button id="compressBtn" class="btn btn-primary" title="压缩JSON (Ctrl+M)">压缩</button>
+                        <button id="escapeBtn" class="btn btn-primary" title="转义JSON字符串 (Ctrl+E)">转义</button>
+                        <button id="unescapeBtn" class="btn btn-primary" title="去除转义 (Ctrl+U)">去除转义</button>
+                        <button id="clearBtn" class="btn btn-secondary" title="清空内容 (Ctrl+L)">清空</button>
+                        <button id="copyBtn" class="btn btn-secondary" title="复制到剪贴板">复制</button>
+                        <button id="pasteBtn" class="btn btn-secondary" title="从剪贴板粘贴">粘贴</button>
+                    </div>
+                </div>
+                <div class="error-message">
+                    <span id="errorText">Wish you happiness every day!</span>
+                </div>
+                <div class="editor-container">
+                    <textarea id="inputEditor"></textarea>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- CodeMirror 脚本 -->
+    <script src="lib/codemirror/lib/codemirror.js"></script>
+    <script src="lib/codemirror/mode/javascript/javascript.js"></script>
+    <script src="lib/codemirror/addon/fold/foldcode.js"></script>
+    <script src="lib/codemirror/addon/fold/foldgutter.js"></script>
+    <script src="lib/codemirror/addon/fold/brace-fold.js"></script>
+    <script src="lib/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="lib/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="lib/codemirror/addon/lint/lint.js"></script>
+    <script src="lib/codemirror/addon/lint/json-lint.js"></script>
+    <script src="lib/jsonlint-mod/jsonlint.js"></script>
+    <!-- 自定义脚本 -->
+    <script src="renderer.js"></script>
+</body>
+</html> 

@@ -1,0 +1,95 @@
+{
+  "name": "json-formatter",
+  "version": "1.0.0",
+  "description": "一个JSON格式化工具",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "make:mac": "electron-forge make --platform darwin",
+    "make:win": "electron-forge make --platform win32",
+    "make:linux": "electron-forge make --platform linux",
+    "publish": "electron-forge publish",
+    "dev": "electron . --dev",
+    "copy-deps": "cp -r node_modules/codemirror/lib node_modules/codemirror/theme node_modules/codemirror/mode node_modules/codemirror/addon src/renderer/lib/codemirror/ && mkdir -p src/renderer/lib/jsonlint-mod && cp node_modules/jsonlint-mod/lib/jsonlint.js src/renderer/lib/jsonlint-mod/"
+  },
+  "keywords": [
+    "json",
+    "formatter",
+    "electron"
+  ],
+  "author": "JSON Tool",
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
+    "electron": "^27.0.0"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "codemirror": "^5.65.2",
+    "jsonlint-mod": "^1.7.6"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "name": "JSON Formatter",
+        "asar": true,
+        "icon": "./src/assets/icon",
+        "extraResource": [
+          "./src/assets"
+        ],
+        "win32metadata": {
+          "CompanyName": "JSON Tool",
+          "FileDescription": "JSON Formatter",
+          "OriginalFilename": "JSON Formatter.exe",
+          "ProductName": "JSON Formatter",
+          "InternalName": "JSON Formatter"
+        }
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "json_formatter",
+            "authors": "JSON Tool",
+            "description": "一个JSON格式化工具",
+            "setupIcon": "./src/assets/icon.ico"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "options": {
+              "icon": "./src/assets/icon.png",
+              "categories": ["Utility", "Development"],
+              "maintainer": "JSON Tool",
+              "homepage": "https://github.com/yourusername/json-formatter"
+            }
+          }
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {
+            "options": {
+              "icon": "./src/assets/icon.png",
+              "categories": ["Utility", "Development"],
+              "homepage": "https://github.com/yourusername/json-formatter"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
