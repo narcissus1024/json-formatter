@@ -5,6 +5,7 @@ if (require('electron-squirrel-startup')) {
 
 const { app, BrowserWindow, Menu, Tray, globalShortcut, nativeImage } = require('electron');
 const path = require('path');
+const electronLocalshortcut = require('electron-localshortcut');
 
 // 保持对窗口对象的全局引用，避免 JavaScript 垃圾回收时窗口被关闭
 let mainWindow = null;
@@ -147,8 +148,17 @@ function createWindow() {
     }
   });
 
+  // 在窗口关闭时注销本地快捷键
+  mainWindow.on('closed', () => {
+    unregisterLocalShortcuts();
+    mainWindow = null;
+  });
+
   // 创建应用菜单
   createApplicationMenu();
+
+  // 注册快捷键
+  registerShortcuts();
 }
 
 // 创建应用菜单
@@ -200,23 +210,32 @@ function createApplicationMenu() {
 
 // 注册快捷键
 function registerShortcuts() {
+  // Alt+F 保持为全局快捷键
   globalShortcut.register('Alt+F', () => {
     toggleWindow();
   });
 
-  // ESC 隐藏窗口
-  globalShortcut.register('Escape', () => {
-    if (mainWindow && !mainWindow.isDestroyed() && mainWindow.isVisible()) {
-      mainWindow.hide();
-    }
-  });
+  // ESC 改为本地快捷键，只在窗口中生效
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    electronLocalshortcut.register(mainWindow, 'Escape', () => {
+      if (mainWindow.isVisible()) {
+        mainWindow.hide();
+      }
+    });
+  }
+}
+
+// 注销本地快捷键
+function unregisterLocalShortcuts() {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    electronLocalshortcut.unregisterAll(mainWindow);
+  }
 }
 
 // 应用初始化
 app.whenReady().then(() => {
   createWindow();
   createTray();
-  registerShortcuts();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -237,7 +256,8 @@ app.on('before-quit', () => {
   app.isQuitting = true;
 });
 
-// 注销所有快捷键
+// 应用退出时注销所有快捷键
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
+  unregisterLocalShortcuts();
 }); 

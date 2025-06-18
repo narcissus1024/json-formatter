@@ -33,7 +33,8 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "codemirror": "^5.65.2",
-    "jsonlint-mod": "^1.7.6"
+    "jsonlint-mod": "^1.7.6",
+    "electron-localshortcut": "^3.2.1"
   },
   "config": {
     "forge": {
