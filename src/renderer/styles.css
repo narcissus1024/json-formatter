@@ -99,7 +99,7 @@ header p {
     border: 2px solid var(--border-color);
     border-radius: 8px;
     overflow: hidden;
-    min-height: 100px;
+    min-height: 500px;
     min-width: 0;
     width: 100%;
 }
@@ -185,9 +185,9 @@ header p {
     transform: translateY(0);
 }
 
-/* CodeMirror 自定义样式 */
-.CodeMirror {
-    height: auto !important;
+/* CodeMirror 6 自定义样式 */
+.cm-editor {
+    height: 100% !important;
     min-height: 500px !important;
     font-family: 'Fira Code', 'Courier New', Consolas, monospace;
     font-size: 14px;
@@ -197,39 +197,29 @@ header p {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0 !important;
-    position: relative;
-    -webkit-overflow-scrolling: touch;
 }
 
-.CodeMirror-scroll {
-    overflow-y: auto !important;
-    overflow-x: auto !important;
-    height: auto;
-    position: relative;
-    outline: none;
-    min-height: 0;
+.cm-scroller {
+    overflow: auto !important;
+    height: 100% !important;
+    min-height: 500px !important;
 }
 
-.CodeMirror-gutters {
+.cm-gutters {
     border-right: 1px solid var(--border-color);
     background-color: var(--background-color);
-    white-space: nowrap;
-    height: 100%;
-}
-
-.CodeMirror-linenumber {
-    padding: 0 5px;
-    min-width: 20px;
-    text-align: right;
     color: #999;
-    white-space: nowrap;
 }
 
-.CodeMirror-lines {
+.cm-lineNumbers {
+    color: #999;
+}
+
+.cm-content {
     padding: 10px 0;
 }
 
-.CodeMirror-line {
+.cm-line {
     padding: 0 10px;
 }
 
@@ -248,12 +238,11 @@ header p {
     }
 
     .editor-controls {
-        gap: 8px;
+        flex-direction: column;
     }
 
     .btn {
-        padding: 6px 12px;
-        font-size: 13px;
+        width: 100%;
     }
 }
 

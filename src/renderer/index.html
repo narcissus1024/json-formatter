@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
     <title>JSON格式化工具</title>
-    <!-- CodeMirror 样式 -->
-    <link rel="stylesheet" href="lib/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="lib/codemirror/theme/eclipse.css">
-    <link rel="stylesheet" href="lib/codemirror/addon/fold/foldgutter.css">
-    <link rel="stylesheet" href="lib/codemirror/addon/lint/lint.css">
     <!-- 自定义样式 -->
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,7 +12,6 @@
     <div class="container">
         <header>
             <h1>JSON格式化工具</h1>
-            <!-- <p>一个简单易用的JSON处理工具</p> -->
         </header>
 
         <div class="main-content">
@@ -38,23 +32,12 @@
                     <span id="errorText">Wish you happiness every day!</span>
                 </div>
                 <div class="editor-container">
-                    <textarea id="inputEditor"></textarea>
+                    <div id="inputEditor"></div>
                 </div>
             </section>
         </div>
     </div>
 
-    <!-- CodeMirror 脚本 -->
-    <script src="lib/codemirror/lib/codemirror.js"></script>
-    <script src="lib/codemirror/mode/javascript/javascript.js"></script>
-    <script src="lib/codemirror/addon/fold/foldcode.js"></script>
-    <script src="lib/codemirror/addon/fold/foldgutter.js"></script>
-    <script src="lib/codemirror/addon/fold/brace-fold.js"></script>
-    <script src="lib/codemirror/addon/edit/closebrackets.js"></script>
-    <script src="lib/codemirror/addon/edit/matchbrackets.js"></script>
-    <script src="lib/codemirror/addon/lint/lint.js"></script>
-    <script src="lib/codemirror/addon/lint/json-lint.js"></script>
-    <script src="lib/jsonlint-mod/jsonlint.js"></script>
     <!-- 自定义脚本 -->
     <script src="renderer.js"></script>
 </body>

@@ -2,6 +2,18 @@
  * JSON格式化工具
  * 提供JSON格式化、压缩、转义、去除转义等功能
  */
+
+const { EditorState } = require('@codemirror/state');
+const { EditorView, keymap } = require('@codemirror/view');
+const { defaultKeymap, indentWithTab } = require('@codemirror/commands');
+const { json } = require('@codemirror/lang-json');
+const { lineNumbers, highlightActiveLineGutter, highlightSpecialChars, drawSelection, dropCursor, rectangularSelection, crosshairCursor, highlightActiveLine, keymap: keymapOf } = require('@codemirror/view');
+const { foldGutter, indentOnInput, syntaxHighlighting, defaultHighlightStyle, bracketMatching, foldKeymap } = require('@codemirror/language');
+const { closeBrackets, closeBracketsKeymap } = require('@codemirror/autocomplete');
+const { searchKeymap } = require('@codemirror/search');
+const { history, historyKeymap } = require('@codemirror/commands');
+const { lintKeymap } = require('@codemirror/lint');
+
 class JSONFormatter {
     /**
      * 初始化JSON格式化工具
@@ -17,6 +29,7 @@ class JSONFormatter {
      */
     initializeElements() {
         this.elements = {
+            editorContainer: document.querySelector('.editor-container'),
             editor: document.getElementById('inputEditor'),
             formatBtn: document.getElementById('formatBtn'),
             compressBtn: document.getElementById('compressBtn'),
@@ -33,46 +46,64 @@ class JSONFormatter {
      * 初始化CodeMirror编辑器
      */
     initializeEditor() {
-        this.editor = CodeMirror.fromTextArea(this.elements.editor, {
-            mode: { name: 'javascript', json: true },
-            theme: 'eclipse',
-            lineNumbers: true,
-            lineWrapping: true,
-            indentUnit: 2,
-            tabSize: 2,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            foldGutter: true,
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter", "CodeMirror-lint-markers"],
-            scrollbarStyle: 'native',
-            viewportMargin: Infinity,
-            fixedGutter: true,
-            lint: { json: true },
-            extraKeys: {
-                "Ctrl-Q": (cm) => cm.foldCode(cm.getCursor())
-            },
-            placeholder: "请输入JSON字符串...",
-            styleActiveLine: true,
-            foldOptions: {
-                widget: '...'
-            }
+        // 创建基本扩展
+        const extensions = [
+            lineNumbers(),
+            highlightActiveLineGutter(),
+            highlightSpecialChars(),
+            history(),
+            foldGutter(),
+            drawSelection(),
+            dropCursor(),
+            EditorState.allowMultipleSelections.of(true),
+            indentOnInput(),
+            syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+            bracketMatching(),
+            closeBrackets(),
+            rectangularSelection(),
+            crosshairCursor(),
+            highlightActiveLine(),
+            json(),
+            EditorView.lineWrapping,
+            keymap.of([
+                ...closeBracketsKeymap,
+                ...defaultKeymap,
+                ...searchKeymap,
+                ...historyKeymap,
+                ...foldKeymap,
+                ...lintKeymap,
+                indentWithTab
+            ]),
+            EditorState.tabSize.of(2),
+            EditorView.theme({
+                '&': {
+                    height: '500px'
+                },
+                '.cm-scroller': {
+                    height: '500px !important'
+                }
+            })
+        ];
+
+        // 创建编辑器状态
+        const state = EditorState.create({
+            doc: '',
+            extensions
         });
 
-        // 设置编辑器样式
-        this.editor.setSize('100%', '500px');
-        
-        // 设置编辑器容器样式
-        const wrapper = this.editor.getWrapperElement();
-        wrapper.style.minHeight = '500px';
-        wrapper.style.height = '500px';
-        
-        // 设置滚动容器样式
-        const scroller = this.editor.getScrollerElement();
-        scroller.style.minHeight = '500px';
-        scroller.style.height = '500px';
-        
-        // 刷新编辑器以确保正确显示
-        setTimeout(() => this.editor.refresh(), 100);
+        // 创建编辑器视图
+        this.editor = new EditorView({
+            state,
+            parent: this.elements.editor
+        });
+
+        // 处理编辑器容器的点击事件
+        this.elements.editorContainer.addEventListener('click', (e) => {
+            // 如果点击的是编辑器容器但不是编辑器本身
+            if (e.target === this.elements.editorContainer) {
+                this.editor.focus();
+            }
+        });
     }
 
     /**
@@ -104,7 +135,7 @@ class JSONFormatter {
      */
     handleKeydown(event) {
         if (event.ctrlKey || event.metaKey) {
-            switch(event.key) {
+            switch (event.key) {
                 case 'f':
                     event.preventDefault();
                     this.formatJSON();
@@ -140,11 +171,34 @@ class JSONFormatter {
     }
 
     /**
+     * 获取编辑器内容
+     * @returns {string} 编辑器内容
+     */
+    getEditorValue() {
+        return this.editor.state.doc.toString();
+    }
+
+    /**
+     * 设置编辑器内容
+     * @param {string} value 要设置的内容
+     */
+    setEditorValue(value) {
+        const transaction = this.editor.state.update({
+            changes: {
+                from: 0,
+                to: this.editor.state.doc.length,
+                insert: value
+            }
+        });
+        this.editor.dispatch(transaction);
+    }
+
+    /**
      * 格式化JSON
      */
     formatJSON() {
         try {
-            const input = this.editor.getValue().trim();
+            const input = this.getEditorValue().trim();
             if (!input) {
                 this.showMessage('请输入JSON字符串', 'warning');
                 return;
@@ -152,7 +206,7 @@ class JSONFormatter {
 
             const parsed = JSON.parse(input);
             const formatted = JSON.stringify(parsed, null, 2);
-            this.editor.setValue(formatted);
+            this.setEditorValue(formatted);
             this.showMessage('JSON格式化成功', 'success');
         } catch (error) {
             this.showMessage(`格式化失败: ${error.message}`, 'error');
@@ -164,7 +218,7 @@ class JSONFormatter {
      */
     compressJSON() {
         try {
-            const input = this.editor.getValue().trim();
+            const input = this.getEditorValue().trim();
             if (!input) {
                 this.showMessage('请输入JSON字符串', 'warning');
                 return;
@@ -172,7 +226,7 @@ class JSONFormatter {
 
             const parsed = JSON.parse(input);
             const compressed = JSON.stringify(parsed);
-            this.editor.setValue(compressed);
+            this.setEditorValue(compressed);
             this.showMessage('JSON压缩成功', 'success');
         } catch (error) {
             this.showMessage(`压缩失败: ${error.message}`, 'error');
@@ -184,14 +238,14 @@ class JSONFormatter {
      */
     escapeJSON() {
         try {
-            const input = this.editor.getValue().trim();
+            const input = this.getEditorValue().trim();
             if (!input) {
                 this.showMessage('请输入JSON字符串', 'warning');
                 return;
             }
 
             const escaped = JSON.stringify(input);
-            this.editor.setValue(escaped);
+            this.setEditorValue(escaped);
             this.showMessage('JSON转义成功', 'success');
         } catch (error) {
             this.showMessage(`转义失败: ${error.message}`, 'error');
@@ -203,7 +257,7 @@ class JSONFormatter {
      */
     unescapeJSON() {
         try {
-            const input = this.editor.getValue().trim();
+            const input = this.getEditorValue().trim();
             if (!input) {
                 this.showMessage('请输入JSON字符串', 'warning');
                 return;
@@ -230,7 +284,7 @@ class JSONFormatter {
                     .replace(/\\f/g, '\f');
             }
 
-            this.editor.setValue(content);
+            this.setEditorValue(content);
             this.showMessage('去除转义成功', 'success');
         } catch (error) {
             this.showMessage(`去除转义失败: ${error.message}`, 'error');
@@ -241,7 +295,7 @@ class JSONFormatter {
      * 清空输入
      */
     clearInput() {
-        this.editor.setValue('');
+        this.setEditorValue('');
         this.showMessage('内容已清空', 'success');
     }
 
@@ -250,16 +304,11 @@ class JSONFormatter {
      */
     async copyToClipboard() {
         try {
-            const text = this.editor.getValue();
-            if (!text) {
-                this.showMessage('没有内容可复制', 'warning');
-                return;
-            }
-
-            await navigator.clipboard.writeText(text);
-            this.showMessage('复制成功', 'success');
+            const content = this.getEditorValue();
+            await navigator.clipboard.writeText(content);
+            this.showMessage('已复制到剪贴板', 'success');
         } catch (error) {
-            this.showMessage('复制失败，请手动复制', 'error');
+            this.showMessage('复制失败', 'error');
         }
     }
 
@@ -268,16 +317,18 @@ class JSONFormatter {
      */
     async pasteFromClipboard() {
         try {
-            const text = await navigator.clipboard.readText();
-            this.editor.setValue(text);
-            this.showMessage('粘贴成功', 'success');
+            const content = await navigator.clipboard.readText();
+            this.setEditorValue(content);
+            this.showMessage('已从剪贴板粘贴', 'success');
         } catch (error) {
-            this.showMessage('粘贴失败，请手动粘贴', 'error');
+            this.showMessage('粘贴失败', 'error');
         }
     }
 }
 
-// 初始化应用
-document.addEventListener('DOMContentLoaded', () => {
-    new JSONFormatter();
+// 创建实例
+window.addEventListener('DOMContentLoaded', () => {
+    const formatter = new JSONFormatter();
+    // 设置初始焦点
+    setTimeout(() => formatter.editor.focus(), 100);
 }); 
