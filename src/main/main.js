@@ -74,12 +74,18 @@ class AppManager {
     const contextMenu = Menu.buildFromTemplate([
       {
         label: '显示/隐藏',
-        click: () => this.toggleWindow()
+        click: () => this.toggleWindowVisibilityAndFocus()
       },
       {
         label: '退出',
         click: () => {
           this.isQuitting = true;
+          // 先注销快捷键
+          this.unregisterShortcuts();
+          // 如果窗口存在且没有被销毁，则关闭窗口
+          if (this.window && !this.window.isDestroyed()) {
+            this.window.close();
+          }
           app.quit();
         }
       }
@@ -91,19 +97,29 @@ class AppManager {
   }
 
   /**
-   * 切换窗口显示状态
+   * 处理窗口的显示、隐藏和置顶状态
    */
-  toggleWindow() {
+  toggleWindowVisibilityAndFocus() {
     if (!this.window || this.window.isDestroyed()) {
       this.createWindow();
       return;
     }
-    
+
     if (this.window.isVisible()) {
-      this.window.hide();
+      if (this.window.isFocused()) {
+        // 如果窗口是可见且已经在焦点上，则隐藏它
+        this.window.hide();
+      } else {
+        // 如果窗口是可见但不在焦点上，则将其置顶
+        this.window.show();
+        this.window.focus();
+        this.window.moveTop();
+      }
     } else {
+      // 如果窗口是隐藏的，则显示并置顶
       this.window.show();
       this.window.focus();
+      this.window.moveTop();
       this.window.webContents.send('focus-editor');
     }
   }
@@ -163,7 +179,6 @@ class AppManager {
 
     // 窗口关闭时清理资源
     this.window.on('closed', () => {
-      this.unregisterShortcuts();
       this.window = null;
     });
   }
@@ -218,22 +233,25 @@ class AppManager {
   }
 
   /**
-   * 注册快捷键
+   * 注册全局快捷键
    */
   registerShortcuts() {
-    globalShortcut.register('Alt+F', () => {
-      this.toggleWindow();
+    // 注册 Option + F 快捷键
+    const shortcut = process.platform === 'darwin' ? 'Option+F' : 'Alt+F';
+    globalShortcut.register(shortcut, () => {
+      this.toggleWindowVisibilityAndFocus();
     });
   }
 
   /**
-   * 注销快捷键
+   * 注销全局快捷键
    */
   unregisterShortcuts() {
-    if (this.window) {
-      electronLocalshortcut.unregisterAll(this.window);
+    try {
+      globalShortcut.unregisterAll();
+    } catch (error) {
+      console.error('Error unregistering shortcuts:', error);
     }
-    globalShortcut.unregisterAll();
   }
 }
 
